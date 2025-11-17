@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP Online Seva & Service Center</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons for a clean, modern look -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Set up custom configuration for Tailwind -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // Enable dark mode via class switching on the HTML tag
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#1D4ED8', // Tailwind blue-700
+                        'secondary-gray': '#F9FAFB', // Tailwind gray-50
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styles for the Inter font and smooth scroll */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        html {
+            scroll-behavior: smooth;
+        }
+        /* Custom message box styling (replacement for alert/confirm) */
+        #message-box {
+            transition: all 0.3s ease-in-out;
+            transform: translateY(100px);
+            opacity: 0;
+            pointer-events: none;
+        }
+        #message-box.active {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+
+    <!-- Message Box (Alert/Confirm replacement) -->
+    <div id="message-box" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 p-4 max-w-sm w-11/12 bg-blue-600 text-white rounded-lg shadow-2xl z-50">
+        <p id="message-text" class="font-medium"></p>
+        <button onclick="closeMessageBox()" class="mt-2 w-full py-1 bg-white text-blue-600 font-bold rounded-md hover:bg-gray-100 transition">
+            OK
+        </button>
+    </div>
+
+    <!-- Header & Navigation -->
+    <header class="sticky top-0 bg-white dark:bg-gray-800 shadow-lg z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo/Brand Name -->
+                <a href="#" class="text-xl font-extrabold text-blue-700 tracking-tight">
+                    MP Online <span class="text-gray-900 dark:text-gray-100">Seva</span>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#home" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">Home</a>
+                    <a href="#services" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">Services</a>
+                    <a href="#jobs" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">Job Updates</a>
+                    <a href="#home-help" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">Home Help</a>
+                    <a href="#contact" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">Contact</a>
+                </nav>
+
+                <!-- Theme Toggle and Mobile Menu Button Container -->
+                <div class="flex items-center space-x-2">
+                    <!-- Theme Toggle Button -->
+                    <button id="theme-toggle" class="p-2 rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-100 transition" aria-label="Toggle theme">
+                        <!-- Initial state is 'sun' icon in HTML (assuming light mode, allowing switch to dark) -->
+                        <i data-lucide="sun" id="theme-icon" class="w-6 h-6"></i>
+                    </button>
+                    
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-button" class="md:hidden p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-100 transition" aria-expanded="false">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#home" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600">Home</a>
+                <a href="#services" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600">Services</a>
+                <a href="#jobs" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600">Job Updates</a>
+                <a href="#home-help" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600">Home Help</a>
+                <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-600">Contact</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- 1. Hero Section -->
+        <section id="home" class="pt-16 pb-24 bg-gradient-to-br from-white to-blue-50 dark:from-gray-900 dark:to-gray-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-5xl md:text-6xl font-extrabold text-gray-900 dark:text-gray-100 mb-4 leading-tight">
+                    Your Trusted <span class="text-blue-600 dark:text-blue-400">Digital Service</span> Hub
+                </h1>
+                <p class="text-xl text-gray-600 dark:text-gray-300 mb-10 max-w-3xl mx-auto">
+                    MP Online Seva & Service Center provides seamless digital, documentation, and home-assist solutions right where you need them.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="#services" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-bold rounded-xl shadow-lg text-white bg-blue-600 hover:bg-blue-700 transition transform hover:scale-[1.02]">
+                        Explore Services
+                    </a>
+                    <a href="https://wa.me/+918602255768" target="_blank" class="inline-flex items-center justify-center px-8 py-3 border-2 border-blue-600 text-base font-bold rounded-xl shadow-md text-blue-600 bg-white dark:bg-gray-900 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700 transition transform hover:scale-[1.02]">
+                        <i data-lucide="message-circle" class="w-5 h-5 mr-2"></i> WhatsApp Us
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. MP Online Shop Services -->
+        <section id="services" class="py-16 md:py-24 bg-white dark:bg-gray-900">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl font-extrabold text-gray-900 dark:text-gray-100 text-center mb-4">Our Core Services</h2>
+                <p class="text-lg text-gray-600 dark:text-gray-300 text-center mb-12 max-w-2xl mx-auto">Everything you need, from government forms to instant printouts, all under one roof.</p>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
+
+                    <!-- Service Card Template -->
+                    <div class="group bg-secondary-gray dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transform hover:scale-[1.02]">
+                        <div class="flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition">
+                            <i data-lucide="file-text" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Online Document Submission</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Efficient and secure submission for various official documents and applications.</p>
+                    </div>
+
+                    <div class="group bg-secondary-gray dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transform hover:scale-[1.02]">
+                        <div class="flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition">
+                            <i data-lucide="wallet" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Money Withdrawal & Deposit</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">AEPS and Bank services for easy money management at your convenience.</p>
+                    </div>
+
+                    <div class="group bg-secondary-gray dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transform hover:scale-[1.02]">
+                        <div class="flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition">
+                            <i data-lucide="form-input" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Government Form Submission</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Assistance with filling out and submitting all state and central government forms.</p>
+                    </div>
+
+                    <div class="group bg-secondary-gray dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transform hover:scale-[1.02]">
+                        <div class="flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition">
+                            <i data-lucide="user-cog" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">PAN, Aadhar Updates</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Correction, enrollment, and linking services for essential identity documents.</p>
+                    </div>
+
+                    <div class="group bg-secondary-gray dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transform hover:scale-[1.02]">
+                        <div class="flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition">
+                            <i data-lucide="type" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Assignments Typing & Toolkit</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Professional typing, formatting, and access to essential study/work tools.</p>
+                    </div>
+
+                    <div class="group bg-secondary-gray dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transform hover:scale-[1.02]">
+                        <div class="flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition">
+                            <i data-lucide="scissors" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Stationery Items</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Quick access to necessary pens, papers, folders, and basic office supplies.</p>
+                    </div>
+
+                    <div class="group bg-secondary-gray dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transform hover:scale-[1.02]">
+                        <div class="flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition">
+                            <i data-lucide="printer" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Photocopy & Printouts</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">High-speed color and black & white printouts and photocopying services.</p>
+                    </div>
+
+                    <div class="group bg-secondary-gray dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transform hover:scale-[1.02]">
+                        <div class="flex items-center justify-center w-12 h-12 mb-4 rounded-full bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition">
+                            <i data-lucide="camera" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Passport-size Photo Service</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Instant, high-quality photos meeting all official specifications.</p>
+                    </div>
+
+                    <div class="col-span-2 md:col-span-3 lg:col-span-4 flex justify-center">
+                        <div class="group bg-secondary-gray dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transform hover:scale-[1.02] w-full max-w-sm text-center">
+                            <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 rounded-full bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition">
+                                <i data-lucide="clipboard-list" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">All Exam Form Submissions</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm">Complete support for competitive and academic examination form filling.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Job Updates (Govt + Private) -->
+        <section id="jobs" class="py-16 md:py-24 bg-secondary-gray dark:bg-gray-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl font-extrabold text-gray-900 dark:text-gray-100 text-center mb-4">Latest Job Opportunities</h2>
+                <p class="text-lg text-gray-600 dark:text-gray-300 text-center mb-12 max-w-2xl mx-auto">Stay updated with the newest openings in both government and private sectors. Click "Apply Now" to start your application via WhatsApp.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    <!-- Government Job Card 1 -->
+                    <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-xl border-t-4 border-blue-600">
+                        <span class="inline-flex items-center px-3 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-800 mb-3">
+                            <i data-lucide="briefcase" class="w-4 h-4 mr-1"></i> Government
+                        </span>
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Patwari Recruitment 2024</h3>
+                        <p class="text-gray-500 dark:text-gray-400 mb-4 text-sm">Vacancies: 1,200+ | Last Date: Oct 30, 2024 | Eligibility: Graduation</p>
+                        <p class="text-gray-700 dark:text-gray-300 mb-6 text-base">State-level recruitment for revenue administration posts. Mandatory local language knowledge required.</p>
+                        <a href="https://wa.me/+919109445782?text=I%20want%20to%20apply%20for%20the%20Patwari%20Recruitment%202024." target="_blank" class="w-full inline-flex items-center justify-center py-2 px-4 border border-transparent rounded-xl shadow-sm text-base font-medium text-white bg-green-500 hover:bg-green-600 transition">
+                            Apply Now <i data-lucide="chevron-right" class="w-5 h-5 ml-1"></i>
+                        </a>
+                    </div>
+
+                    <!-- Private Job Card 1 -->
+                    <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-xl border-t-4 border-yellow-500">
+                        <span class="inline-flex items-center px-3 py-1 text-sm font-semibold rounded-full bg-yellow-100 text-yellow-800 mb-3">
+                            <i data-lucide="hard-hat" class="w-4 h-4 mr-1"></i> Private Sector
+                        </span>
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Data Entry Operator (Local Firm)</h3>
+                        <p class="text-gray-500 dark:text-gray-400 mb-4 text-sm">Location: Indore/Bhopal | Salary: ₹15,000 - ₹20,000 | Experience: 0-2 Years</p>
+                        <p class="text-gray-700 dark:text-gray-300 mb-6 text-base">Immediate openings for fast typists with good computer literacy and MS Office skills.</p>
+                        <a href="https://wa.me/+9109445782?text=I%20want%20to%20apply%20for%20the%20Data%20Entry%20Operator%20Job." target="_blank" class="w-full inline-flex items-center justify-center py-2 px-4 border border-transparent rounded-xl shadow-sm text-base font-medium text-white bg-green-500 hover:bg-green-600 transition">
+                            Apply Now <i data-lucide="chevron-right" class="w-5 h-5 ml-1"></i>
+                        </a>
+                    </div>
+
+                    <!-- Government Job Card 2 -->
+                    <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-xl border-t-4 border-blue-600">
+                        <span class="inline-flex items-center px-3 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-800 mb-3">
+                            <i data-lucide="briefcase" class="w-4 h-4 mr-1"></i> Government
+                        </span>
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Police Constable Vacancy</h3>
+                        <p class="text-gray-500 dark:text-gray-400 mb-4 text-sm">Vacancies: 4,000+ | Physical Test Soon | Eligibility: 10th/12th Pass</p>
+                        <p class="text-gray-700 dark:text-gray-300 mb-6 text-base">Upcoming opportunity for strong candidates to join the state police force.</p>
+                        <a href="https://wa.me/+919109445782?text=I%20want%20to%20apply%20for%20the%20Police%20Constable%20Vacancy." target="_blank" class="w-full inline-flex items-center justify-center py-2 px-4 border border-transparent rounded-xl shadow-sm text-base font-medium text-white bg-green-500 hover:bg-green-600 transition">
+                            Apply Now <i data-lucide="chevron-right" class="w-5 h-5 ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Home Assistance / Home Visit Service -->
+        <section id="home-help" class="py-16 md:py-24 bg-white dark:bg-gray-900">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="lg:flex lg:items-center lg:space-x-12">
+                    <div class="lg:w-1/2 mb-10 lg:mb-0">
+                        <h2 class="text-4xl font-extrabold text-gray-900 dark:text-gray-100 mb-4">Personalized Home Assistance</h2>
+                        <p class="text-xl text-gray-600 dark:text-gray-300 mb-8">Can't visit our center? We bring our services to your doorstep for convenience and peace of mind.</p>
+
+                        <ul class="space-y-4 mb-8 text-gray-700 dark:text-gray-300">
+                            <li class="flex items-start">
+                                <i data-lucide="user-plus" class="w-6 h-6 text-blue-600 dark:text-blue-400 mr-3 mt-1 flex-shrink-0"></i>
+                                <div><span class="font-bold">Elderly Assistance:</span> Dedicated support for senior citizens needing help with digital tasks.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="package-check" class="w-6 h-6 text-blue-600 dark:text-blue-400 mr-3 mt-1 flex-shrink-0"></i>
+                                <div><span class="font-bold">Document Collection:</span> We collect required documents and forms directly from your home.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="bike" class="w-6 h-6 text-blue-600 dark:text-blue-400 mr-3 mt-1 flex-shrink-0"></i>
+                                <div><span class="font-bold">Delivery Service:</span> Printouts, photocopies, or finished applications delivered safely to you.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <i data-lucide="send" class="w-6 h-6 text-blue-600 dark:text-blue-400 mr-3 mt-1 flex-shrink-0"></i>
+                                <div><span class="font-bold">Form Submission:</span> Complete application and government form submission from your location.</div>
+                            </li>
+                        </ul>
+
+                        <a href="https://wa.me/+919109445782?text=I%20would%20like%20to%20book%20a%20Home%20Visit%20Service." target="_blank" class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-lg font-bold rounded-xl shadow-lg text-white bg-orange-500 hover:bg-orange-600 transition transform hover:scale-[1.02]">
+                            <i data-lucide="home" class="w-6 h-6 mr-2"></i> Book Home Visit Now
+                        </a>
+                    </div>
+
+                    <div class="lg:w-1/2 p-8 bg-blue-50 dark:bg-gray-800 rounded-2xl shadow-inner border border-blue-200 dark:border-gray-700">
+                        <h3 class="text-2xl font-extrabold text-blue-700 dark:text-blue-400 mb-4 flex items-center">
+                            <i data-lucide="indian-rupee" class="w-6 h-6 mr-2"></i> Transparent Service Charges
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center pb-2 border-b border-blue-200 dark:border-gray-700">
+                                <span class="font-medium text-gray-700 dark:text-gray-300">Base Home Visit Charge (within 5km)</span>
+                                <span class="text-xl font-bold text-blue-800 dark:text-blue-300">₹ 150</span>
+                            </div>
+                            <div class="flex justify-between items-center pb-2 border-b border-blue-200 dark:border-gray-700">
+                                <span class="font-medium text-gray-700 dark:text-gray-300">Elderly/Special Assistance Fee</span>
+                                <span class="text-xl font-bold text-blue-800 dark:text-blue-300">₹ 50 extra</span>
+                            </div>
+                            <div class="flex justify-between items-center pb-2 border-b border-blue-200 dark:border-gray-700">
+                                <span class="font-medium text-gray-700 dark:text-gray-300">Service Fee (Form/Print)</span>
+                                <span class="text-xl font-bold text-blue-800 dark:text-blue-300">Standard Rate + 10%</span>
+                            </div>
+                            <div class="flex justify-between items-center pt-2">
+                                <span class="text-lg font-extrabold text-blue-900 dark:text-blue-200">Minimum Booking Amount</span>
+                                <span class="text-2xl font-extrabold text-blue-900 dark:text-blue-200">₹ 200</span>
+                            </div>
+                        </div>
+                        <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">*Exact charges confirmed before booking via WhatsApp.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Communication & Document Sharing (Contact Form) -->
+        <section id="contact" class="py-16 md:py-24 bg-secondary-gray dark:bg-gray-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl font-extrabold text-gray-900 dark:text-gray-100 text-center mb-4">Get In Touch</h2>
+                <p class="text-lg text-gray-600 dark:text-gray-300 text-center mb-12 max-w-2xl mx-auto">We're here to help. Contact us directly or use our secure document upload feature.</p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                    <!-- Side Contact Information & Quick Chat -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-xl">
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">Quick Contact</h3>
+                            <div class="space-y-3">
+                                <p class="flex items-center text-gray-700 dark:text-gray-300">
+                                    <i data-lucide="phone" class="w-5 h-5 text-blue-600 dark:text-blue-400 mr-3"></i>
+                                    <span class="font-semibold">Phone:</span> +91-9109445782
+                                </p>
+                                <p class="flex items-center text-gray-700 dark:text-gray-300">
+                                    <i data-lucide="map-pin" class="w-5 h-5 text-blue-600 dark:text-blue-400 mr-3"></i>
+                                    <span class="font-semibold">Location:</span> [Placeholder Address, MP]
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- WhatsApp Chat Button -->
+                        <a href="https://wa.me/+919109445782" target="_blank" class="w-full flex items-center justify-center p-4 rounded-2xl text-white bg-green-500 hover:bg-green-600 shadow-xl transition transform hover:scale-[1.01] font-bold text-lg">
+                            <i data-lucide="whatsapp" class="w-6 h-6 mr-3"></i>
+                            Start Live WhatsApp Chat
+                        </a>
+                    </div>
+
+                    <!-- Contact Form -->
+                    <div class="lg:col-span-2 p-8 bg-white dark:bg-gray-900 rounded-2xl shadow-xl">
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Send a Quick Query</h3>
+                        <form id="contact-form" onsubmit="handleContactSubmit(event)">
+                            <div class="mb-4">
+                                <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Your Name</label>
+                                <input type="text" id="name" name="name" required class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-xl focus:ring-blue-500 focus:border-blue-500 transition">
+                            </div>
+                            <div class="mb-4">
+                                <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Phone Number (For Callback)</label>
+                                <input type="tel" id="phone" name="phone" required class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-xl focus:ring-blue-500 focus:border-blue-500 transition">
+                            </div>
+                            <div class="mb-6">
+                                <label for="query" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Your Query</label>
+                                <textarea id="query" name="query" rows="4" required class="w-full p-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-xl focus:ring-blue-500 focus:border-blue-500 transition"></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-3 px-4 border border-transparent rounded-xl shadow-md text-base font-bold text-white bg-blue-600 hover:bg-blue-700 transition">
+                                Submit Query
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Upload Documents Section (Simulated) -->
+                    <div class="lg:col-span-3 p-8 bg-blue-50 dark:bg-gray-800 rounded-2xl shadow-inner border border-blue-200 dark:border-gray-700">
+                        <h3 class="text-2xl font-bold text-blue-700 dark:text-blue-400 mb-4 flex items-center">
+                            <i data-lucide="upload-cloud" class="w-6 h-6 mr-2"></i> Document Pre-Upload
+                        </h3>
+                        <p class="text-gray-700 dark:text-gray-300 mb-4">Securely send us your documents (PDFs, Photos, Forms) before your visit or booking. We will contact you once received.</p>
+                        <form id="upload-form" onsubmit="handleUploadSubmit(event)">
+                            <div class="flex items-center justify-center w-full">
+                                <label for="file-upload" class="flex flex-col items-center justify-center w-full h-32 border-2 border-blue-300 dark:border-blue-500 border-dashed rounded-xl cursor-pointer bg-blue-50 dark:bg-gray-700 hover:bg-blue-100 dark:hover:bg-gray-600 transition">
+                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <i data-lucide="file-up" class="w-8 h-8 mb-3 text-blue-500 dark:text-blue-300"></i>
+                                        <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">PDF, JPG, PNG, DOCX (Max 5MB)</p>
+                                        <p id="file-name" class="text-sm text-green-600 mt-1"></p>
+                                    </div>
+                                    <input id="file-upload" type="file" class="hidden" multiple accept=".pdf,.jpg,.jpeg,.png,.docx" onchange="updateFileName(this)">
+                                </label>
+                            </div>
+                            <button type="submit" class="mt-4 w-full py-3 px-4 border border-transparent rounded-xl shadow-md text-base font-bold text-white bg-blue-600 hover:bg-blue-700 transition">
+                                Submit Documents for Review
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <!-- Business Identity -->
+                <div>
+                    <h4 class="text-xl font-extrabold text-blue-400 mb-4">MP Online Seva</h4>
+                    <p class="text-gray-400 mb-2">Trusted Service Provider</p>
+                    <p class="text-sm text-gray-500">All Rights Reserved &copy; 2024</p>
+                </div>
+
+                <!-- Contact Details -->
+                <div>
+                    <h4 class="text-xl font-semibold mb-4">Contact Info</h4>
+                    <p class="flex items-center text-sm text-gray-400 mb-2">
+                        <i data-lucide="phone" class="w-4 h-4 mr-2"></i> +91-9109445782
+                    </p>
+                    <p class="flex items-center text-sm text-gray-400 mb-2">
+                        <i data-lucide="map-pin" class="w-4 h-4 mr-2"></i> [Placeholder Address, MP]
+                    </p>
+                    <p class="flex items-center text-sm text-gray-400">
+                        <i data-lucide="mail" class="w-4 h-4 mr-2"></i> contact@mponlineseva.com
+                    </p>
+                </div>
+
+                <!-- Hours -->
+                <div>
+                    <h4 class="text-xl font-semibold mb-4">Working Hours</h4>
+                    <p class="text-sm text-gray-400">Mon - Sat: 9:00 AM - 7:00 PM</p>
+                    <p class="text-sm text-gray-400">Sunday: Closed</p>
+                </div>
+
+                <!-- Social & Quick Links -->
+                <div>
+                    <h4 class="text-xl font-semibold mb-4">Follow Us</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-blue-400 transition">
+                            <i data-lucide="facebook" class="w-6 h-6"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-blue-400 transition">
+                            <i data-lucide="instagram" class="w-6 h-6"></i>
+                        </a>
+                        <a href="https://wa.me/+919109445782" target="_blank" class="text-gray-400 hover:text-blue-400 transition">
+                            <i data-lucide="whatsapp" class="w-6 h-6"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 pt-6 border-t border-gray-800 text-center">
+                <p class="text-xs text-gray-500">Designed for accessibility and speed on all devices.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- Utility Functions ---
+
+        // Function to show the custom message box
+        function showMessageBox(message) {
+            document.getElementById('message-text').textContent = message;
+            document.getElementById('message-box').classList.add('active');
+        }
+
+        // Function to hide the custom message box
+        function closeMessageBox() {
+            document.getElementById('message-box').classList.remove('active');
+        }
+
+        // --- Theme Toggle Functions ---
+
+        // Function to update the theme icon and state
+        function updateThemeUI(isDark, themeIcon, htmlElement) {
+            if (isDark) {
+                htmlElement.classList.add('dark');
+                // Use sun icon when theme is dark (user can switch to light)
+                themeIcon.setAttribute('data-lucide', 'sun'); 
+            } else {
+                htmlElement.classList.remove('dark');
+                // Use moon icon when theme is light (user can switch to dark)
+                themeIcon.setAttribute('data-lucide', 'moon');
+            }
+            // Re-render the icon after changing its data attribute
+            lucide.createIcons();
+        }
+
+        // Function to handle theme toggling
+        function toggleTheme(themeIcon, htmlElement) {
+            const isDark = htmlElement.classList.contains('dark');
+            const newTheme = isDark ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            updateThemeUI(newTheme === 'dark', themeIcon, htmlElement);
+        }
+
+        // Initial theme application
+        function applyInitialTheme() {
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const themeIcon = document.getElementById('theme-icon');
+            const htmlElement = document.documentElement;
+
+            if (!themeIcon || !themeToggleBtn) {
+                console.error("Theme elements not found.");
+                return;
+            }
+
+            let storedTheme = localStorage.getItem('theme');
+            // Check for system preference only if no theme is stored
+            let prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // Set theme based on storage or system preference
+            let initialDark = storedTheme === 'dark' || (!storedTheme && prefersDark);
+            
+            updateThemeUI(initialDark, themeIcon, htmlElement);
+
+            // Attach listener after initial load
+            themeToggleBtn.addEventListener('click', () => toggleTheme(themeIcon, htmlElement));
+        }
+
+
+        // --- Navigation and Initialization ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Lucide icons and apply theme on page load
+            applyInitialTheme();
+            
+            // Mobile menu toggle logic
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    const isExpanded = this.getAttribute('aria-expanded') === 'true' || false;
+                    this.setAttribute('aria-expanded', !isExpanded);
+                    mobileMenu.classList.toggle('hidden');
+                });
+
+                // Hide mobile menu after a link is clicked
+                document.querySelectorAll('#mobile-menu a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileMenuButton.setAttribute('aria-expanded', 'false');
+                        mobileMenu.classList.add('hidden');
+                    });
+                });
+            }
+        });
+
+        // --- Form Submission Handlers (Simulated) ---
+
+        // Contact Form Submission
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const query = document.getElementById('query').value;
+
+            // Simple validation check
+            if (name && phone && query) {
+                // Simulate sending data (in a real app, this would be an API call)
+                console.log('Contact Form Submitted:', { name, phone, query });
+                
+                showMessageBox(`Thank you, ${name}! Your query has been successfully submitted. We will contact you at ${phone} shortly.`);
+                
+                // Clear the form after submission
+                document.getElementById('contact-form').reset();
+            } else {
+                showMessageBox('Please fill in all required fields.');
+            }
+        }
+
+        // Document Upload Form Helper: Update file name display
+        function updateFileName(input) {
+            const fileNameDisplay = document.getElementById('file-name');
+            if (input.files.length > 0) {
+                fileNameDisplay.textContent = `${input.files.length} file(s) selected: ${Array.from(input.files).map(f => f.name).join(', ')}`;
+            } else {
+                fileNameDisplay.textContent = '';
+            }
+        }
+
+        // Document Upload Form Submission
+        function handleUploadSubmit(event) {
+            event.preventDefault();
+            
+            const fileInput = document.getElementById('file-upload');
+            if (fileInput.files.length === 0) {
+                showMessageBox('Please select at least one document to upload.');
+                return;
+            }
+
+            // Simulate file processing and "upload"
+            const fileNames = Array.from(fileInput.files).map(f => f.name).join(', ');
+            console.log('Document Upload Submitted:', fileNames);
+            
+            showMessageBox(`Documents submitted! We have received ${fileInput.files.length} file(s) for review. Files: ${fileNames}.`);
+            
+            // Clear the form and display name
+            document.getElementById('upload-form').reset();
+            document.getElementById('file-name').textContent = '';
+        }
+    </script>
+
+</body>
+</html>
